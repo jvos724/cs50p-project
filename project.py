@@ -111,8 +111,24 @@ class Note:
         return note
 
     @classmethod
-    def list_all(cls, name=None):
-        print("[NYI]", name)  # TODO: implement list_all func
+    def get_all(cls, search, db=DB_FILE):
+        db_path = os.path.expanduser(db)
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM notes")
+        rows = cursor.fetchall()
+
+        conn.close()
+
+        notes = []
+        for row in rows:
+            tags = row[2].split(",")
+            lines = row[3].split("\n")
+            note = Note(row[1], tags, lines)
+            notes.append(note)
+
+        return notes
 
 
 def main():
@@ -126,7 +142,9 @@ def main():
                     note.save()
 
             case "list":
-                Note.list_all(args.name)
+                notes = Note.get_all(args.name)
+                for note in notes:
+                    print(note)
     except KeyboardInterrupt:
         print()
         sys.exit(0)

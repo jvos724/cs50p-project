@@ -128,7 +128,16 @@ class Note:
             note = Note(row[1], tags, lines)
             notes.append(note)
 
-        return notes
+        # if `cb list all`, return all notes
+        # else return n=last n notes
+        if search == "all" or search == None:
+            return notes
+        else:
+            try:
+                n = int(search) * -1
+                return notes[n:]
+            except ValueError:
+                sys.exit("Invalid number of notes")
 
 
 def main():
@@ -142,9 +151,13 @@ def main():
                     note.save()
 
             case "list":
-                notes = Note.get_all(args.name)
-                for note in notes:
+                notes = Note.get_all(args.num)
+                for i, note in enumerate(notes):
                     print(note)
+                    if i == len(notes) - 1:
+                        break
+                    else:
+                        print("\n")
     except KeyboardInterrupt:
         print()
         sys.exit(0)
@@ -162,9 +175,7 @@ def get_args():
     )
 
     list_parser = subparsers.add_parser("list", help="List notes")
-    list_parser.add_argument(
-        "name", nargs="?", default=None, help="Name to filter notes by"
-    )
+    list_parser.add_argument("num", nargs="?", default=None, help="Show last [n] notes")
 
     args = parser.parse_args()
     return args

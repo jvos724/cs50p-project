@@ -109,7 +109,7 @@ class NotesDB:
         """
 
         if q:
-            query = "SELECT * FROM notes WHERE name LIKE ? or tags LIKE ?"
+            query = "SELECT * FROM notes WHERE title LIKE ? or tags LIKE ?"
             q = f"%{q}%"
             self.cursor.execute(query, (q, q))
             rows = self.cursor.fetchall()

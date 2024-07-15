@@ -8,15 +8,10 @@ import string
 import sys
 from datetime import datetime
 
-# NOTE: commented out unused imports
 from rich import print
-# from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
-
-# from rich.table import Table
-
 
 DB_FILE = "~/.local/share/cb/notes.db"
 

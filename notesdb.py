@@ -6,7 +6,7 @@ from note import Note
 
 class NotesDB:
     """Class representing a SQLite DB for a collection of Notes"""
-    def __init__(self, db_file=":memory:"):
+    def __init__(self, db_file: str = ":memory:") -> None:
         self.db_file = db_file
         self.conn = sqlite3.connect(self.db_file)
         self.cursor = self.conn.cursor()
@@ -28,7 +28,7 @@ class NotesDB:
         self.cursor.execute(query)
         self.conn.commit()
 
-    def add(self, notes):
+    def add(self, notes: list[Note]) -> None:
         """Save a list of one or more notes to the DB"""
         query = """
         INSERT INTO notes (name, tags, content) VALUES (?, ?, ?)
@@ -41,13 +41,13 @@ class NotesDB:
             self.cursor.execute(query, (note.name, tags_str, content_str))
             self.conn.commit()
 
-    def get(self, n=None):
+    def get(self, n: int = 0) -> list[Note]:
         """Get all or n=# most recent Notes from DB"""
         query = """
         SELECT * FROM notes ORDER BY id DESC
         """
         # return last n rows if specified; otherwise all
-        if n:
+        if n != 0:
             query += "LIMIT ?"
             self.cursor.execute(query, (n,))
         else:
@@ -65,11 +65,11 @@ class NotesDB:
         return notes
 
     @property
-    def db_file(self):
+    def db_file(self) -> str:
         return self._db_file
 
     @db_file.setter
-    def db_file(self, f):
+    def db_file(self, f: str) -> None:
         if f == ":memory:":
             self._db_file = f
         else:

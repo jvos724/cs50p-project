@@ -70,6 +70,8 @@ class NotesDB:
             note = Note.from_sql(row)
             notes.append(note)
 
+        notes.reverse()
+
         return notes
 
 

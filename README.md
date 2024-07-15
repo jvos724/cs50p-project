@@ -4,6 +4,6 @@ This is the code I'm working on for my [CS50P](https://cs50.harvard.edu/python/2
 
 This is very much a work in progress and this is a bit of a placeholder at the moment.
 
-## cb (codebrain)
+## sc (snipcache)
 
 Command line utility for storing and quickly searching through notes and code snippets on the fly.

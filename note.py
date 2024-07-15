@@ -1,8 +1,8 @@
 import string
 import random
 from datetime import datetime
-
 from typing import Generator, List, Optional, TYPE_CHECKING
+
 from rich.console import Console, ConsoleOptions, RenderableType
 from rich.markdown import Markdown
 from rich.panel import Panel

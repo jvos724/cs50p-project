@@ -29,10 +29,16 @@ def main() -> None:
                 for note in notes:
                     print(note, "\n")
             case "search" | "s":  # TODO: implement better search functionality
-                notes = db.get()
-                for note in notes:
-                    if args.query in note.tags:
-                        print(note, "\n")
+                try:
+                    notes = db.search(args.query)
+                except ValueError:
+                    sys.exit("Search term required.")
+                else:
+                    if notes:
+                        for note in notes:
+                            print(note, "\n")
+                    else:
+                        sys.exit("No matches found.")
     except KeyboardInterrupt:
         print()
         sys.exit(0)

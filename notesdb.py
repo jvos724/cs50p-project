@@ -1,5 +1,6 @@
 import os
 import sqlite3
+from typing import Optional, List
 
 from note import Note
 
@@ -59,7 +60,7 @@ class NotesDB:
             self.cursor.execute(query, (note.name, tags_str, content_str))
             self.conn.commit()
 
-    def get(self, n: int = 0) -> list[Note]:
+    def get(self, n: int = 0) -> Optional[list[Note]]:
         """Get all or the n most recent Notes from the DB
 
         Args:
@@ -86,6 +87,31 @@ class NotesDB:
 
         return notes
 
+    def search(self, q: str) -> Optional[list[Note]]:
+        """Get all notes searching for q in name and tags
+
+        Args:
+            q (str): The term to search for
+
+        Returns:
+            List[Note]: The list of matched notes
+
+        Raises:
+            ValueError: If q is empty
+        """
+
+        if q:
+            query = "SELECT * FROM notes WHERE name LIKE ? or tags LIKE ?"
+            q = f"%{q}%"
+            self.cursor.execute(query, (q, q))
+            rows = self.cursor.fetchall()
+            if rows:
+                return [Note.from_sql(row) for row in rows]
+            else:
+                return None
+        else:
+            raise ValueError("Search cannot be empty")
+
     @property
     def db_file(self) -> str:
         return self._db_file
@@ -97,6 +123,7 @@ class NotesDB:
         Args:
             f (str): The path to the SQLite file
         """
+
         if f == ":memory:":
             self._db_file = f
         else:

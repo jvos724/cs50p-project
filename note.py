@@ -155,6 +155,14 @@ class Note:
 
     @classmethod
     def from_sql(cls, row: tuple) -> "Note":
+        """Returns a Note object from a given row from SQLite
+
+        Args:
+            row (tuple): the SQL row
+
+        Returns:
+            Note: A new instance of the note class
+        """
         tags = row[2].split(",")
         lines = row[3].split("\n")
         return cls(row[1], tags, lines, id=row[0])

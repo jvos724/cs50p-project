@@ -70,6 +70,7 @@ class NotesDB:
 
     @db_file.setter
     def db_file(self, f: str) -> None:
+        """db_file setter that handles `:memory:` and creates paths"""
         if f == ":memory:":
             self._db_file = f
         else:
@@ -78,4 +79,5 @@ class NotesDB:
             if os.path.exists(dir):
                 self._db_file = path
             else:
-                raise ValueError(f"Invalid DB path: {f}")
+                os.mkdir(dir)
+                self._db_file = path

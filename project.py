@@ -20,54 +20,52 @@ DB_FILE = "~/.local/share/cb/notes.db"
 
 
 class NotesDB:
-    def __init__(self, db=DB_FILE):
-        self.db = db
+    def __init__(self, db_file=DB_FILE):
+        self.db_file = os.path.expanduser(db_file)
+        self.conn = sqlite3.connect(self.db_file)
+        self.cursor = self.conn.cursor()
+        self._create_table()
+
+    def _create_table(self):
+        if self.db_file != ":memory:":
+            os.makedirs(os.path.dirname(self.db_file), exist_ok=True)
+        query = """
+        CREATE TABLE IF NOT EXISTS notes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        tags TEXT,
+        content TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+        self.cursor.execute(query)
+        self.conn.commit()
 
     def add(self, notes):
-        db_path = os.path.expanduser(self.db)
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)
-
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-
-        cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS notes (
-            id INTEGER PRIMARY key,
-            name TEXT NOT NULL,
-            tags TEXT,
-            content TEXT
-            )
-            """
-        )
-
+        query = """
+        INSERT INTO notes (name, tags, content) VALUES (?, ?, ?)
+        """
         for note in notes:
             # convert tags[] and content[] to strings for SQL
             tags_str = ",".join(note.tags)
             content_str = "\n".join(note.content)
 
-            cursor.execute(
-                """
-                INSERT INTO notes (name, tags, content) VALUES (?, ?, ?)
-                """,
-                (note.name, tags_str, content_str),
-            )
+            self.cursor.execute(query, (note.name, tags_str, content_str))
+            self.conn.commit()
 
-        conn.commit()
-        conn.close()
 
     def get(self, n=None):
-        db_path = os.path.expanduser(self.db)
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-
+        query = """
+        SELECT * FROM notes ORDER BY id DESC
+        """
         # return last n rows if specified; otherwise all
         if n:
-            cursor.execute("SELECT * FROM notes ORDER BY id DESC LIMIT ?", (n,))
+            query += "LIMIT ?"
+            self.cursor.execute(query, (n,))
         else:
-            cursor.execute("SELECT * FROM notes ORDER BY id DESC")
+            self.cursor.execute(query)
 
-        rows = cursor.fetchall()
+        rows = self.cursor.fetchall()
 
         notes = []
         for row in rows:

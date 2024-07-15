@@ -70,7 +70,7 @@ class NotesDB:
         """Get all or the n most recent Notes from the DB
 
         Args:
-            n (int): The number of most recent notes to retrieve. Defaults to 0.
+            n (int): The number of most recent notes to retrieve. Defaults to 0, where 0 returns all notes.
 
         Returns:
             List[Note]: A list of retrieved Notes

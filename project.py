@@ -52,9 +52,7 @@ def get_args():
     )
 
     list_parser = subparsers.add_parser("list", aliases=["l"], help="List notes")
-    list_parser.add_argument(
-        "num", nargs="?", default=None, help="last [n] notes to show"
-    )
+    list_parser.add_argument("num", nargs="?", default=0, help="last [n] notes to show")
 
     list_parser = subparsers.add_parser(
         "search", aliases=["s"], help="List all notes by tag"

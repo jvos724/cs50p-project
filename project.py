@@ -14,6 +14,8 @@ from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 from rich.rule import Rule
 
+# default db file if none is specified
+# TODO: add support for Windows path here
 DB_FILE = "~/.local/share/cb/notes.db"
 
 
@@ -40,6 +42,7 @@ class NotesDB:
         )
 
         for note in notes:
+            # convert tags[] and content[] to strings for SQL
             tags_str = ",".join(note.tags)
             content_str = "\n".join(note.content)
 
@@ -58,6 +61,7 @@ class NotesDB:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
 
+        # return last n rows if specified; otherwise all
         if n:
             cursor.execute("SELECT * FROM notes ORDER BY id DESC LIMIT ?", (n,))
         else:
@@ -91,14 +95,15 @@ class Note:
         self.tags = tags
         self.content = content
 
-    # print method for rich's print fn
+    # print like __str__ method for rich's print fn
     def __rich_console__(self, console, options):
         header = f"[b]NOTE #{self.id}[/b]"
         footer = f"[b]END NOTE #{self.id}[/b]"
         tagline = " ".join(f"[b]#[/b]{tag}" for tag in self.tags)
+        content = "\n".join(self.content)
+
         panel = Panel(self.name, title=header, subtitle=tagline)
         yield panel
-        content = "\n".join(self.content)
         md_content = Markdown(content)
         yield md_content
         rule = Rule(title=footer)
@@ -113,6 +118,8 @@ class Note:
 
     @id.setter
     def id(self, id):
+        # set id to placeholder _ for preview
+        # only applicable before it is saved to db
         if not id: id = "_"
         self._id = id
 
@@ -122,6 +129,8 @@ class Note:
 
     @name.setter
     def name(self, name):
+        # do not allow for empty names
+        # Note.new() method handles default name
         if name:
             self._name = name
         else:
@@ -133,6 +142,7 @@ class Note:
 
     @tags.setter
     def tags(self, tags):
+        # always sort tags alphabetically
         self._tags = sorted(tags)
 
     @property
@@ -146,6 +156,7 @@ class Note:
     @classmethod
     def new(cls, name=None):
         if not name:
+            # set a default note name as YYYYMMDD-random_hex
             default = datetime.now().strftime("%Y%m%d-") + "".join(
                 random.sample(string.hexdigits, 8)
             )
@@ -180,7 +191,7 @@ def main():
                 notes = db.get(args.num)
                 for note in notes:
                     print(note, "\n")
-            case "search":
+            case "search": # TODO: implement better search functionality
                 notes = db.get()
                 for note in notes:
                     if args.query in note.tags:

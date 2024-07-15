@@ -52,8 +52,24 @@ class NotesDB:
         conn.commit()
         conn.close()
 
-    def get_all(self):
-        ...
+    def get(self, n=None):
+        db_path = os.path.expanduser(self.db)
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        if n:
+            cursor.execute("SELECT * FROM notes ORDER BY id DESC LIMIT ?", (n,))
+        else:
+            cursor.execute("SELECT * FROM notes ORDER BY id DESC")
+
+        rows = cursor.fetchall()
+
+        notes = []
+        for row in rows:
+            note = Note.from_sql(row)
+            notes.append(note)
+
+        return notes
 
 
     @property
@@ -122,33 +138,11 @@ class Note:
         return note
 
     @classmethod
-    def get_all(cls, num=None, db=DB_FILE):
-        db_path = os.path.expanduser(db)
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-
-        cursor.execute("SELECT * FROM notes")
-        rows = cursor.fetchall()
-
-        conn.close()
-
-        notes = []
-        for row in rows:
-            tags = row[2].split(",")
-            lines = row[3].split("\n")
-            note = Note(row[1], tags, lines)
-            notes.append(note)
-
-        # if `cb list all`, return all notes
-        # else return n=last n notes
-        if num == "all" or num == None:
-            return notes
-        else:
-            try:
-                n = int(num) * -1
-                return notes[n:]
-            except ValueError:
-                sys.exit("Invalid number of notes")
+    def from_sql(cls, row):
+        tags = row[2].split(",")
+        lines = row[3].split("\n")
+        note = Note(row[1], tags, lines)
+        return note
 
 
 def main():
@@ -164,11 +158,11 @@ def main():
                     db.add([note])
 
             case "list":
-                notes = Note.get_all(args.num)
+                notes = db.get(args.num)
                 for note in notes:
                     print(note, "\n")
             case "search":
-                notes = Note.get_all()
+                notes = db.get()
                 for note in notes:
                     if args.query in note.tags:
                         print(note, "\n")

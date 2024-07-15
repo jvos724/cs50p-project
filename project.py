@@ -57,7 +57,7 @@ def get_args() -> argparse.Namespace:
     """
 
     parser = argparse.ArgumentParser(
-        prog="cdbr", description="Codebrain programming knowledge db"
+        prog="sc", description="snipcache programming knowledge db"
     )
     subparsers = parser.add_subparsers(dest="mode")
 

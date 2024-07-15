@@ -111,7 +111,7 @@ class Note:
         return note
 
     @classmethod
-    def get_all(cls, search, db=DB_FILE):
+    def get_all(cls, num=None, db=DB_FILE):
         db_path = os.path.expanduser(db)
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
@@ -130,11 +130,11 @@ class Note:
 
         # if `cb list all`, return all notes
         # else return n=last n notes
-        if search == "all" or search == None:
+        if num == "all" or num == None:
             return notes
         else:
             try:
-                n = int(search) * -1
+                n = int(num) * -1
                 return notes[n:]
             except ValueError:
                 sys.exit("Invalid number of notes")
@@ -152,12 +152,13 @@ def main():
 
             case "list":
                 notes = Note.get_all(args.num)
-                for i, note in enumerate(notes):
-                    print(note)
-                    if i == len(notes) - 1:
-                        break
-                    else:
-                        print("\n")
+                for note in notes:
+                    print(note, "\n")
+            case "search":
+                notes = Note.get_all()
+                for note in notes:
+                    if args.query in note.tags:
+                        print(note, "\n")
     except KeyboardInterrupt:
         print()
         sys.exit(0)
@@ -171,11 +172,16 @@ def get_args():
 
     new_parser = subparsers.add_parser("new", help="Create a new note")
     new_parser.add_argument(
-        "name", nargs="?", default=None, help="Name of the new note"
+        "name", nargs="?", default=None, help="name of the new note"
     )
 
     list_parser = subparsers.add_parser("list", help="List notes")
-    list_parser.add_argument("num", nargs="?", default=None, help="Show last [n] notes")
+    list_parser.add_argument(
+        "num", nargs="?", default=None, help="last [n] notes to show"
+    )
+
+    list_parser = subparsers.add_parser("search", help="List all notes by tag")
+    list_parser.add_argument("query", nargs="?", default=None, help="tag to search by")
 
     args = parser.parse_args()
     return args

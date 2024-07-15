@@ -83,9 +83,11 @@ class NotesDB:
         rows = self.cursor.fetchall()
 
         notes = [Note.from_sql(row) for row in rows]
-        notes.reverse()
-
-        return notes
+        if notes:
+            notes.reverse()
+            return notes
+        else:
+            return None
 
     def search(self, q: str) -> Optional[list[Note]]:
         """Get all notes searching for q in name and tags

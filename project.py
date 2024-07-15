@@ -26,9 +26,12 @@ def main() -> None:
                     db.add([note])
             case "list" | "l":
                 notes = db.get(args.num)
-                for note in notes:
-                    print(note, "\n")
-            case "search" | "s":  # TODO: implement better search functionality
+                if notes:
+                    for note in notes:
+                        print(note, "\n")
+                else:
+                    sys.exit("No notes found.")
+            case "search" | "s":
                 try:
                     notes = db.search(args.query)
                 except ValueError:

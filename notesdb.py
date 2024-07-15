@@ -3,19 +3,17 @@ import sqlite3
 
 from note import Note
 
-# default db file if none is specified
-# TODO: add support for Windows path here
-DB_FILE = "~/.local/share/cb/notes.db"
-
 
 class NotesDB:
-    def __init__(self, db_file=DB_FILE):
-        self.db_file = os.path.expanduser(db_file)
+    """Class representing a SQLite DB for a collection of Notes"""
+    def __init__(self, db_file=":memory:"):
+        self.db_file = db_file
         self.conn = sqlite3.connect(self.db_file)
         self.cursor = self.conn.cursor()
         self._create_table()
 
     def _create_table(self):
+        """Initialize NotesDB SQLite table"""
         if self.db_file != ":memory:":
             os.makedirs(os.path.dirname(self.db_file), exist_ok=True)
         query = """
@@ -31,6 +29,7 @@ class NotesDB:
         self.conn.commit()
 
     def add(self, notes):
+        """Save a list of one or more notes to the DB"""
         query = """
         INSERT INTO notes (name, tags, content) VALUES (?, ?, ?)
         """
@@ -43,6 +42,7 @@ class NotesDB:
             self.conn.commit()
 
     def get(self, n=None):
+        """Get all or n=# most recent Notes from DB"""
         query = """
         SELECT * FROM notes ORDER BY id DESC
         """
@@ -65,9 +65,17 @@ class NotesDB:
         return notes
 
     @property
-    def db(self):
-        return self._db
+    def db_file(self):
+        return self._db_file
 
-    @db.setter
-    def db(self, db):
-        self._db = db
+    @db_file.setter
+    def db_file(self, f):
+        if f == ":memory:":
+            self._db_file = f
+        else:
+            path = os.path.expanduser(f)
+            dir = os.path.dirname(path)
+            if os.path.exists(dir):
+                self._db_file = path
+            else:
+                raise ValueError(f"Invalid DB path: {f}")

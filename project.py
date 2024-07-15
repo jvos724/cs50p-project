@@ -9,13 +9,17 @@ from rich.panel import Panel
 from note import Note
 from notesdb import NotesDB
 
+# default db file if none is specified
+# TODO: add support for Windows path here
+DEFAULT_DB = "~/.local/share/cb/notes.db"
+
 
 def main():
     # try here to handle Ctrl-C gracefully
     try:
         args = get_args()
         # initialize NotesDB
-        db = NotesDB()
+        db = NotesDB(DEFAULT_DB)
         match args.mode:
             case "new" | "n":
                 note = Note.new(args.name)

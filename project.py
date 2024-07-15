@@ -9,23 +9,21 @@ from rich.panel import Panel
 from note import Note
 from notesdb import NotesDB
 
-# default db file if none is specified
-# TODO: add support for Windows path here
-DEFAULT_DB = "~/.local/share/cb/notes.db"
+
+DEFAULT_DB = "~/.local/share/cb/notes.db"  # TODO: Windows support
 
 
-def main():
-    # try here to handle Ctrl-C gracefully
+def main() -> None:
+    """Main function call for SC that handles Ctrl-C exits"""
+
     try:
         args = get_args()
-        # initialize NotesDB
         db = NotesDB(DEFAULT_DB)
         match args.mode:
             case "new" | "n":
                 note = Note.new(args.name)
                 if note.confirm():
                     db.add([note])
-
             case "list" | "l":
                 notes = db.get(args.num)
                 for note in notes:
@@ -40,7 +38,13 @@ def main():
         sys.exit(0)
 
 
-def get_args():
+def get_args() -> argparse.Namespace:
+    """Parse command line arguments
+
+    Returns:
+        argparse.Namespace: The parsed arguments
+    """
+
     parser = argparse.ArgumentParser(
         prog="cdbr", description="Codebrain programming knowledge db"
     )
@@ -59,21 +63,31 @@ def get_args():
     )
     list_parser.add_argument("query", nargs="?", default=None, help="tag to search by")
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
-def parse_tags(s):
-    # split given list of tags by any " #,"
+def parse_tags(s: str) -> list[str]:
+    """Split a given list of tags by any " #," characters
+
+    Args:
+        s (str): The string containing tags
+
+    Returns:
+        list[str]: A list of parsed tags
+    """
+
     s = s.strip(" #,")
-    tags = re.split(r"[ #,]+", s)
-    return tags
+    return re.split(r"[ #,]+", s)
 
 
 # TODO: look into ways to allow user to go back to previous lines
-def eof_input():
-    # get multiline imput until EOF
-    # returned as a list of lines
+def eof_input() -> list[str]:
+    """Get multiline input until EOF, returned as a list of lines
+
+    Returns:
+        list[str]: A list of lines entered by the user
+    """
+
     panel = Panel(
         "PLEASE ENTER YOUR NOTE BELOW IN MARKDOWN", subtitle="Ctrl-D to Finish"
     )

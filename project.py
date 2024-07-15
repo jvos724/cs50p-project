@@ -12,6 +12,7 @@ from rich import print
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
+from rich.rule import Rule
 
 DB_FILE = "~/.local/share/cb/notes.db"
 
@@ -90,13 +91,16 @@ class Note:
 
     # print method for rich's print fn
     def __rich_console__(self, console, options):
-        header = f"[b]Note #{self.id}:[/b] {self.name}"
+        header = f"[b]NOTE #{self.id}[/b]"
+        footer = f"[b]END NOTE #{self.id}[/b]"
         tagline = " ".join(f"[b]#[/b]{tag}" for tag in self.tags)
-        panel = Panel(header, subtitle=tagline)
+        panel = Panel(self.name, title=header, subtitle=tagline)
         yield panel
         content = "\n".join(self.content)
         md_content = Markdown(content)
         yield md_content
+        rule = Rule(title=footer)
+        yield rule
 
     def confirm(self):
         return Confirm.ask("Save note?")

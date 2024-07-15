@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from typing import Optional, List
+from typing import List, Optional
 
 from note import Note
 
@@ -56,7 +56,7 @@ class NotesDB:
         """
 
         query = """
-        INSERT INTO notes (name, tags, content) VALUES (?, ?, ?)
+        INSERT INTO notes (title, tags, content) VALUES (?, ?, ?)
         """
         for note in notes:
             # convert tags[] and content[] to strings for SQL

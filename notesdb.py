@@ -42,6 +42,12 @@ class NotesDB:
         self.cursor.execute(query)
         self.conn.commit()
 
+    def close(self) -> None:
+        """Close the SQLite connection and cursor"""
+
+        self.cursor.close()
+        self.conn.close()
+
     def add(self, notes: list[Note]) -> None:
         """Save a list of one or more notes to the DB
 

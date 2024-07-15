@@ -16,9 +16,9 @@ DEFAULT_DB = "~/.local/share/cb/notes.db"  # TODO: Windows support
 def main() -> None:
     """Main function call for SC that handles Ctrl-C exits"""
 
+    args = get_args()
+    db = NotesDB(DEFAULT_DB)
     try:
-        args = get_args()
-        db = NotesDB(DEFAULT_DB)
         match args.mode:
             case "new" | "n":
                 note = Note.new(args.name)
@@ -45,6 +45,8 @@ def main() -> None:
     except KeyboardInterrupt:
         print()
         sys.exit(0)
+    finally:
+        db.close()
 
 
 def get_args() -> argparse.Namespace:

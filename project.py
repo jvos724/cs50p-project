@@ -182,16 +182,16 @@ def main():
         # initialize NotesDB
         db = NotesDB()
         match args.mode:
-            case "new":
+            case "new" | "n":
                 note = Note.new(args.name)
                 if note.confirm():
                     db.add([note])
 
-            case "list":
+            case "list" | "l":
                 notes = db.get(args.num)
                 for note in notes:
                     print(note, "\n")
-            case "search": # TODO: implement better search functionality
+            case "search" | "s": # TODO: implement better search functionality
                 notes = db.get()
                 for note in notes:
                     if args.query in note.tags:
@@ -207,17 +207,17 @@ def get_args():
     )
     subparsers = parser.add_subparsers(dest="mode")
 
-    new_parser = subparsers.add_parser("new", help="Create a new note")
+    new_parser = subparsers.add_parser("new", aliases=["n"], help="Create a new note")
     new_parser.add_argument(
         "name", nargs="?", default=None, help="name of the new note"
     )
 
-    list_parser = subparsers.add_parser("list", help="List notes")
+    list_parser = subparsers.add_parser("list", aliases=["l"], help="List notes")
     list_parser.add_argument(
         "num", nargs="?", default=None, help="last [n] notes to show"
     )
 
-    list_parser = subparsers.add_parser("search", help="List all notes by tag")
+    list_parser = subparsers.add_parser("search", aliases=["s"], help="List all notes by tag")
     list_parser.add_argument("query", nargs="?", default=None, help="tag to search by")
 
     args = parser.parse_args()

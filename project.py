@@ -10,7 +10,6 @@ from datetime import datetime
 
 # NOTE: commented out unused imports
 from rich import print
-
 # from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
@@ -20,6 +19,55 @@ from rich.prompt import Confirm, Prompt
 
 
 DB_FILE = "~/.local/share/cb/notes.db"
+
+
+class NotesDB:
+    def __init__(self, db=DB_FILE):
+        self.db = db
+
+    def add(self, notes):
+        db_path = os.path.expanduser(self.db)
+        os.makedirs(os.path.dirname(db_path), exist_ok=True)
+
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS notes (
+            id INTEGER PRIMARY key,
+            name TEXT NOT NULL,
+            tags TEXT,
+            content TEXT
+            )
+            """
+        )
+
+        for note in notes:
+            tags_str = ",".join(note.tags)
+            content_str = "\n".join(note.content)
+
+            cursor.execute(
+                """
+                INSERT INTO notes (name, tags, content) VALUES (?, ?, ?)
+                """,
+                (note.name, tags_str, content_str),
+            )
+
+        conn.commit()
+        conn.close()
+
+    def get_all(self):
+        ...
+
+
+    @property
+    def db(self):
+        return self._db
+
+    @db.setter
+    def db(self, db):
+        self._db = db
 
 
 class Note:
@@ -40,38 +88,6 @@ class Note:
 
     def confirm(self):
         return Confirm.ask("Save note?")
-
-    # default save to DB_FILE const
-    def save(self, db=DB_FILE):
-        db_path = os.path.expanduser(db)
-        os.makedirs(os.path.dirname(db_path), exist_ok=True)
-
-        conn = sqlite3.connect(db_path)
-        cursor = conn.cursor()
-
-        cursor.execute(
-            """
-        CREATE TABLE IF NOT EXISTS notes (
-            id INTEGER PRIMARY key,
-            name TEXT NOT NULL,
-            tags TEXT,
-            content TEXT
-        )
-        """
-        )
-
-        tags_str = ",".join(self.tags)
-        content_str = "\n".join(self.content)
-
-        cursor.execute(
-            """
-        INSERT INTO notes (name, tags, content) VALUES (?, ?, ?)
-        """,
-            (self.name, tags_str, content_str),
-        )
-
-        conn.commit()
-        conn.close()
 
     @property
     def name(self):
@@ -144,11 +160,13 @@ def main():
     # try here to handle Ctrl-C gracefully
     try:
         args = get_args()
+        # initialize NotesDB
+        db = NotesDB()
         match args.mode:
             case "new":
                 note = Note.new(args.name)
                 if note.confirm():
-                    note.save()
+                    db.add([note])
 
             case "list":
                 notes = Note.get_all(args.num)

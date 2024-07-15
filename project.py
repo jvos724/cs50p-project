@@ -82,14 +82,15 @@ class NotesDB:
 
 
 class Note:
-    def __init__(self, name="", tags=[], content=[]):
+    def __init__(self, name, tags, content, id=None):
+        self.id = id
         self.name = name
         self.tags = tags
         self.content = content
 
     # print method for rich's print fn
     def __rich_console__(self, console, options):
-        header = f"[b]Note:[/b] {self.name}"
+        header = f"[b]Note #{self.id}:[/b] {self.name}"
         tagline = " ".join(f"[b]#[/b]{tag}" for tag in self.tags)
         panel = Panel(header, subtitle=tagline)
         yield panel
@@ -101,12 +102,24 @@ class Note:
         return Confirm.ask("Save note?")
 
     @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, id):
+        if not id: id = "_"
+        self._id = id
+
+    @property
     def name(self):
         return self._name
 
     @name.setter
     def name(self, name):
-        self._name = name
+        if name:
+            self._name = name
+        else:
+            raise ValueError("Note name cannot be empty")
 
     @property
     def tags(self):
@@ -126,22 +139,22 @@ class Note:
 
     @classmethod
     def new(cls, name=None):
-        note = Note()
         if not name:
             default = datetime.now().strftime("%Y%m%d-") + "".join(
                 random.sample(string.hexdigits, 8)
             )
             name = Prompt.ask("Note name", default=default).strip()
-        note.name = name
-        note.tags = parse_tags(Prompt.ask("Note tags").strip())
-        note.content = eof_input()
+        name = name
+        tags = parse_tags(Prompt.ask("Note tags").strip())
+        content = eof_input()
+        note = Note(name, tags, content)
         return note
 
     @classmethod
     def from_sql(cls, row):
         tags = row[2].split(",")
         lines = row[3].split("\n")
-        note = Note(row[1], tags, lines)
+        note = Note(row[1], tags, lines, id=row[0])
         return note
 
 

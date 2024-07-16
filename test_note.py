@@ -11,6 +11,7 @@ def test_note():
     )
 
 
+# test that all Note attributes initialize correctly
 def test_note_initialization(test_note):
     assert test_note.id == 1
     assert test_note.name == "Test Note"
@@ -18,6 +19,7 @@ def test_note_initialization(test_note):
     assert test_note.content == ["Line 1", "Line 2"]
 
 
+# test Note.id set/get
 def test_note_id_property(test_note):
     test_note.id = 10
     assert test_note.id == 10
@@ -26,6 +28,7 @@ def test_note_id_property(test_note):
     assert test_note.id == 0
 
 
+# test Note.id=0 default
 def test_note_undef_id_is_zero():
     undef_id_note = Note(
         name="Test Note", tags=["tag1", "tag2"], content=["Line 1", "Line 2"]
@@ -34,6 +37,7 @@ def test_note_undef_id_is_zero():
     assert undef_id_note.id == 0
 
 
+# test Note.name set/get
 def test_note_name_property(test_note):
     with pytest.raises(ValueError):
         test_note.name = ""
@@ -42,16 +46,19 @@ def test_note_name_property(test_note):
     assert test_note.name == "Updated Note"
 
 
+# test Note.tags set/get
 def test_note_tags_property(test_note):
     test_note.tags = ["new1", "new2"]
     assert test_note.tags == ["new1", "new2"]
 
 
+# test Note.content set/get
 def test_note_content_property(test_note):
     test_note.content = ["New line 1", "New line 2"]
     assert test_note.content == ["New line 1", "New line 2"]
 
 
+# test Note rich print method
 def test_rich_console(test_note):
     from rich.console import Console
 
@@ -70,6 +77,7 @@ def test_rich_console(test_note):
     assert "Line 2" in output
 
 
+# test Note.confirm() interactive method
 @patch("rich.prompt.Confirm.ask")
 def test_confirm(mock_ask, test_note):
     mock_ask.return_value = True
@@ -79,6 +87,7 @@ def test_confirm(mock_ask, test_note):
     assert test_note.confirm() is False
 
 
+# test Note.new() interactive creation
 @patch("rich.prompt.Prompt.ask")
 @patch("project.eof_input")
 @patch("project.parse_tags")
@@ -94,6 +103,7 @@ def test_new(mock_parse_tags, mock_eof_input, mock_prompt_ask):
     assert note.content == ["Line 1", "Line 2"]
 
 
+# test Note.from_sql() method
 def test_from_sql():
     row = (1, "Test Note", "tag1,tag2", "Line 1\nLine 2")
 

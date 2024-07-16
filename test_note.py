@@ -119,3 +119,12 @@ def test_from_sql():
     assert note.name == "Test Note"
     assert note.tags == ["tag1", "tag2"]
     assert note.content == ["Line 1", "Line 2"]
+
+
+# test Note.from_sql() returns None for invalid entry
+def test_from_sql_invalid_db():
+    row = (1, "", "", "")
+
+    note = Note.from_sql(row)
+
+    assert note == None

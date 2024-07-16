@@ -1,7 +1,6 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from note import Note
-from datetime import datetime
 
 
 @pytest.fixture

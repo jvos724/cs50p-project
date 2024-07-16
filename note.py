@@ -150,13 +150,19 @@ class Note:
         from project import eof_input, parse_tags
 
         if not name:
-            default = datetime.now().strftime("%Y%m%d-") + "".join(
+            name = datetime.now().strftime("%Y%m%d-") + "".join(
                 random.sample(string.hexdigits, 8)
             )
-            name = Prompt.ask("Note name", default=default).strip()
+        name = Prompt.ask("Note name", default=name).strip()
         tags = parse_tags(Prompt.ask("Note tags").strip())
         content = eof_input()
-        return cls(name, tags, content)
+        try:
+            return cls(name, tags, content)
+        except ValueError:
+            print(
+                "Note was invalid. Please ensure all fields are filled out and try again."
+            )
+            cls.new(name=name)
 
     @classmethod
     def from_sql(cls, row: tuple) -> Optional["Note"]:

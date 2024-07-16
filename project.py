@@ -10,7 +10,7 @@ from note import Note
 from notesdb import NotesDB
 
 
-DEFAULT_DB = "~/.local/share/cb/notes.db"  # TODO: Windows support
+DEFAULT_DB = "~/.local/share/sc/notes.db"  # TODO: Windows support
 
 
 def main() -> None:

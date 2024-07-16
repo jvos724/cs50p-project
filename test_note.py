@@ -48,12 +48,18 @@ def test_note_name_property(test_note):
 
 # test Note.tags set/get
 def test_note_tags_property(test_note):
+    with pytest.raises(ValueError):
+        test_note.tags = [""]
+
     test_note.tags = ["new1", "new2"]
     assert test_note.tags == ["new1", "new2"]
 
 
 # test Note.content set/get
 def test_note_content_property(test_note):
+    with pytest.raises(ValueError):
+        test_note.content = [""]
+
     test_note.content = ["New line 1", "New line 2"]
     assert test_note.content == ["New line 1", "New line 2"]
 

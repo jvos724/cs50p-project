@@ -78,7 +78,7 @@ class Note:
 
         if not id:
             id = 0
-        self._id = id
+        self._id = int(id)
 
     @property
     def name(self) -> str:
@@ -96,7 +96,7 @@ class Note:
         """
 
         if name:
-            self._name = name
+            self._name = str(name)
         else:
             raise ValueError("Note name cannot be empty")
 
@@ -113,7 +113,10 @@ class Note:
             tags (List[str]): A list of tags
         """
 
-        self._tags = sorted(tags)
+        if tags[0]:
+            self._tags = sorted(tags)
+        else:
+            raise ValueError("Tags list cannot be empty")
 
     @property
     def content(self) -> List[str]:
@@ -128,6 +131,8 @@ class Note:
             content (List[str]): The content of the note as a list of lines
         """
 
+        if all(not line.strip() for line in content):
+            raise ValueError("Content cannot be empty")
         self._content = content
 
     @classmethod

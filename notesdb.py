@@ -88,7 +88,7 @@ class NotesDB:
 
         rows = self.cursor.fetchall()
 
-        notes = [Note.from_sql(row) for row in rows]
+        notes = [Note.from_sql(row) for row in rows if Note.from_sql(row) is not None]
         if notes:
             notes.reverse()
             return notes

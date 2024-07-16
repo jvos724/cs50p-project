@@ -159,7 +159,7 @@ class Note:
         return cls(name, tags, content)
 
     @classmethod
-    def from_sql(cls, row: tuple) -> "Note":
+    def from_sql(cls, row: tuple) -> Optional["Note"]:
         """Returns a Note object from a given row from SQLite
 
         Args:
@@ -170,4 +170,7 @@ class Note:
         """
         tags = row[2].split(",")
         lines = row[3].split("\n")
-        return cls(row[1], tags, lines, id=row[0])
+        try:
+            return cls(row[1], tags, lines, id=row[0])
+        except ValueError:
+            return None

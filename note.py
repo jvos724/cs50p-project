@@ -9,6 +9,8 @@ from rich.panel import Panel
 from rich.prompt import Confirm, Prompt
 from rich.rule import Rule
 
+from config import config
+
 
 class Note:
     """
@@ -46,7 +48,7 @@ class Note:
 
         panel = Panel(self.name, title=header, subtitle=tagline)
         yield panel
-        md_content = Markdown(content)
+        md_content = Markdown(content, code_theme=config.get("code_theme"))
         yield md_content
         rule = Rule(title=footer)
         yield rule

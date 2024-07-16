@@ -1,7 +1,7 @@
 import string
 import random
 from datetime import datetime
-from typing import Generator, List, Optional, TYPE_CHECKING
+from typing import Generator, List, Optional, Tuple, TYPE_CHECKING
 
 from rich.console import Console, ConsoleOptions, RenderableType
 from rich.markdown import Markdown
@@ -165,7 +165,7 @@ class Note:
                 )
 
     @classmethod
-    def from_sql(cls, row: tuple) -> Optional["Note"]:
+    def from_sql(cls, row: Tuple[int, str, str, str]) -> Optional["Note"]:
         """Returns a Note object from a given row from SQLite
 
         Args:

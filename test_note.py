@@ -109,6 +109,10 @@ def test_new(mock_parse_tags, mock_eof_input, mock_prompt_ask):
     assert note.content == ["Line 1", "Line 2"]
 
 
+# test Note.new() interactive creation with invalid inputs
+# TODO: implement
+
+
 # test Note.from_sql() method
 def test_from_sql():
     row = (1, "Test Note", "tag1,tag2", "Line 1\nLine 2")

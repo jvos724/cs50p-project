@@ -135,8 +135,7 @@ class NotesDB:
         if f == ":memory:":
             self._db_file = f
         else:
-            path = os.path.expanduser(f)
-            dir = os.path.dirname(path)
+            dir = os.path.dirname(f)
             if not os.path.exists(dir):
                 os.makedirs(dir)
-            self._db_file = path
+            self._db_file = f

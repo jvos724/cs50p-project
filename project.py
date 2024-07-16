@@ -2,6 +2,8 @@
 import argparse
 import re
 import sys
+import os
+import platform
 
 from rich import print
 from rich.panel import Panel
@@ -10,7 +12,10 @@ from note import Note
 from notesdb import NotesDB
 
 
-DEFAULT_DB = "~/.local/share/sc/notes.db"  # TODO: Windows support
+if platform.system() == "Windows":
+    DEFAULT_DB = os.path.join(os.getenv("APPDATA"), "sc", "notes.db")
+else:
+    DEFAULT_DB = os.path.expanduser("~/.local/share/sc/notes.db")
 
 
 def main() -> None:

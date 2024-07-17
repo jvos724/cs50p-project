@@ -12,17 +12,18 @@ from note import Note
 from notesdb import NotesDB
 
 
-if platform.system() == "Windows":
-    DEFAULT_DB = os.path.join(os.getenv("APPDATA"), "sc", "notes.db")
-else:
-    DEFAULT_DB = os.path.expanduser("~/.local/share/sc/notes.db")
+# if platform.system() == "Windows":
+#     DEFAULT_DB = os.path.join(os.getenv("APPDATA"), "sc", "notes.db")
+# else:
+#     DEFAULT_DB = os.path.expanduser("~/.local/share/sc/notes.db")
 
 
 def main() -> None:
     """Main function call for SC that handles Ctrl-C exits"""
 
     args = get_args()
-    db = NotesDB(DEFAULT_DB)
+    # db = NotesDB(DEFAULT_DB)
+    db = NotesDB()
     try:
         match args.mode:
             case "new" | "n":

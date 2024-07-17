@@ -2,6 +2,7 @@ import os
 import sqlite3
 from typing import List, Optional
 
+from config import config
 from note import Note
 
 
@@ -14,7 +15,7 @@ class NotesDB:
         cursor (sqlite3.Cursor): The cursor for the SQLite DB
     """
 
-    def __init__(self, db_file: str = ":memory:") -> None:
+    def __init__(self, db_file: str = config.get("db_file")) -> None:
         """Initialize the NoteDB instance with a SQLite file
 
         Args:

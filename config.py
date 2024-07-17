@@ -20,6 +20,11 @@ class Config:
         except configparser.NoSectionError:
             self.settings["code_theme"] = "default"
 
+        try:
+            self.settings["db_file"] = configur.get("settings", "db_file")
+        except configparser.NoSectionError:
+            self.settings["db_file"] = ":memory:"
+
     def get(self, key, default=None):
         return self.settings.get(key, default)
 

@@ -2,8 +2,6 @@
 import argparse
 import re
 import sys
-import os
-import platform
 
 from rich import print
 from rich.panel import Panel
@@ -12,17 +10,10 @@ from note import Note
 from notesdb import NotesDB
 
 
-# if platform.system() == "Windows":
-#     DEFAULT_DB = os.path.join(os.getenv("APPDATA"), "sc", "notes.db")
-# else:
-#     DEFAULT_DB = os.path.expanduser("~/.local/share/sc/notes.db")
-
-
 def main() -> None:
     """Main function call for SC that handles Ctrl-C exits"""
 
     args = get_args()
-    # db = NotesDB(DEFAULT_DB)
     db = NotesDB()
     try:
         match args.mode:
@@ -97,7 +88,6 @@ def parse_tags(s: str) -> list[str]:
     return re.split(r"[ #,]+", s)
 
 
-# TODO: look into ways to allow user to go back to previous lines
 def eof_input() -> list[str]:
     """Get multiline input until EOF, returned as a list of lines
 

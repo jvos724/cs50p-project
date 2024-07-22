@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from typing import List, Optional
+from typing import Optional
 
 from config import config
 from note import Note

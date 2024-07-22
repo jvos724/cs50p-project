@@ -5,7 +5,7 @@ from note import Note
 
 @pytest.fixture
 def db():
-    db_instance = NotesDB()
+    db_instance = NotesDB(db_file=":memory:")
     yield db_instance
     db_instance.close()
 
